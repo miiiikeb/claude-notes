@@ -1,0 +1,6 @@
+[submodule "std-platform"]
+	path = std-platform
+	url = git@github.com:miiiikeb/claude-webAppStdPlatform.git
+[submodule "deploy-lib"]
+	path = deploy-lib
+	url = git@github.com:miiiikeb/claude-deploy-lib.git

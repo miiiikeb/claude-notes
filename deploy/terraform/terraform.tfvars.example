@@ -1,0 +1,23 @@
+vps_ip               = "45.76.126.189"   # output from ~/infrastructure/VPS/Vultr-001
+ssh_private_key_path = "~/.ssh/id_ed25519"
+
+cloudflare_api_token = ""               # leave empty if using Global API Key
+cloudflare_api_key   = "your-global-api-key"
+cloudflare_email     = "your@email.com"
+cloudflare_zone_id   = "your-zone-id"
+
+subdomain            = "myapp"          # results in myapp.onemorepeppy.com
+app_name             = "myapp"          # must match APP_NAME in scripts/deploy.sh
+app_display_name     = "My App"         # shown in login emails
+
+admin_email          = "miiiikeb@gmail.com"
+allowed_emails       = "you@example.com,other@example.com"
+session_secret       = "generate-with: python3 -c \"import secrets; print(secrets.token_hex(32))\""
+
+smtp_host            = "smtp.migadu.com"
+smtp_port            = 465
+smtp_user            = "noreply@onemorepeppy.com"
+smtp_password        = "your-smtp-password"
+
+github_token         = "ghp_..."
+gh_repo              = "miiiikeb/myapp"

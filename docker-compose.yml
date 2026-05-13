@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3005:3000"
+    volumes:
+      - app-data:/app/data
+      - /opt/notes/.env:/app/.env:ro
+    restart: unless-stopped
+
+volumes:
+  app-data:

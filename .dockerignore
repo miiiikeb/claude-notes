@@ -1,0 +1,8 @@
+node_modules/
+data/
+.env
+.git
+.gitmodules
+deploy-lib/
+deploy/terraform/.terraform
+deploy/terraform/terraform.tfstate*
