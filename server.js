@@ -16,6 +16,10 @@ const app = createApp({
   ],
 });
 
-app.listen(Number(process.env.PORT) || 3000, '0.0.0.0', () => {
-  console.log(`Notes running at http://localhost:${process.env.PORT || 3000}`);
-});
+if (require.main === module) {
+  app.listen(Number(process.env.PORT) || 3000, '0.0.0.0', () => {
+    console.log(`Notes running at http://localhost:${process.env.PORT || 3000}`);
+  });
+}
+
+module.exports = app;
