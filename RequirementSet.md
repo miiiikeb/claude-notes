@@ -1,5 +1,7 @@
 # Requirements — Notes
 
+_2026-05-15: Security fix — markdown output is now sanitized via DOMPurify before rendering to prevent stored XSS. No functional requirement changes._
+
 _Living document. Update before each deployment to reflect functional changes._
 _The deploy script warns if this file hasn't changed since the last deploy tag._
 
