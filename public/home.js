@@ -2,6 +2,7 @@
 
 (function () {
   let activeFilter = '';
+  let activeTag    = null;
   let searchTimer  = null;
 
   function timeAgo(iso) {
@@ -70,12 +71,34 @@
     wireRows(list);
   }
 
-  function showFilterTabs(show) {
-    document.getElementById('home-filter-tabs').style.display = show ? '' : 'none';
+  function showFilters(show) {
+    document.getElementById('home-filter-tabs').style.display   = show ? '' : 'none';
+    document.getElementById('home-tag-filters').style.display   = show ? '' : 'none';
+  }
+
+  async function loadTagFilter() {
+    const container = document.getElementById('home-tag-filters');
+    try {
+      const tags = await api('GET', '/tags');
+      if (!tags.length) { container.innerHTML = ''; return; }
+      container.innerHTML = tags.map(t => `
+        <button class="tag-filter-chip${activeTag === t.name ? ' active' : ''}" data-name="${escHtml(t.name)}">
+          ${escHtml(t.name)}
+          <span class="tag-chip-count">${t.note_count}</span>
+        </button>
+      `).join('');
+      container.querySelectorAll('.tag-filter-chip').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          activeTag = activeTag === btn.dataset.name ? null : btn.dataset.name;
+          await loadTagFilter();
+          await fetchAndRender();
+        });
+      });
+    } catch { /* ignore — tags route may not be available */ }
   }
 
   async function doSearch(q) {
-    showFilterTabs(false);
+    showFilters(false);
     try {
       const results = await api('GET', `/notes/search?q=${encodeURIComponent(q)}`);
       renderSearchResults(results);
@@ -85,9 +108,11 @@
   }
 
   async function fetchAndRender() {
-    showFilterTabs(true);
+    showFilters(true);
     try {
-      const qs = activeFilter ? `?type=${activeFilter}` : '';
+      let qs = '';
+      if (activeFilter) qs += `?type=${activeFilter}`;
+      if (activeTag)    qs += `${qs ? '&' : '?'}tag=${encodeURIComponent(activeTag)}`;
       const notes = await api('GET', `/notes${qs}`);
       renderNotes(notes);
     } catch {
@@ -97,9 +122,10 @@
 
   async function loadHome() {
     activeFilter = '';
+    activeTag    = null;
     clearTimeout(searchTimer);
     document.getElementById('home-search').value = '';
-    showFilterTabs(true);
+    showFilters(true);
 
     document.querySelectorAll('#page-home .filter-tab').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.filter === activeFilter);
@@ -112,7 +138,7 @@
       };
     });
 
-    await fetchAndRender();
+    await Promise.all([loadTagFilter(), fetchAndRender()]);
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -121,6 +147,7 @@
       const q = this.value.trim();
       if (q.length < 2) {
         fetchAndRender();
+        loadTagFilter();
         return;
       }
       searchTimer = setTimeout(() => doSearch(q), 300);

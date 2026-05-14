@@ -36,6 +36,7 @@ db.js                  Thin wrapper — imports std-platform db + project tables
 routes/
   notes.js             Notes CRUD + note-task and note-tag sub-resources
   tasks.js             Tasks CRUD + GET /:id/notes
+  tags.js              Tags listing
 public/
   index.html           SPA shell — nav, page sections, confirm modal, toast
   home.js              Notes list page (filter, render, navigate)
@@ -94,7 +95,7 @@ Auth, admin/users, admin/todo are all handled by std-platform.
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| GET | `/api/notes` | user | List notes, ordered by `updated_at` desc. Optional `?type=meeting\|daily\|general` |
+| GET | `/api/notes` | user | List notes, ordered by `updated_at` desc. Optional `?type=meeting\|daily\|general` and/or `?tag=name` |
 | GET | `/api/notes/search` | user | FTS5 full-text search. `?q=term` — returns `{ id, type, note_date, title, snippet }[]` ordered by relevance |
 | POST | `/api/notes` | user | Create note. Body: `{ type, note_date, title, body? }` |
 | GET | `/api/notes/:id` | user | Get single note (includes body) |
@@ -108,6 +109,10 @@ Auth, admin/users, admin/todo are all handled by std-platform.
 | GET | `/api/tasks/:id/notes` | user | List notes linked to a task |
 | PATCH | `/api/tasks/:id` | user | Update task fields (partial) |
 | DELETE | `/api/tasks/:id` | user | Delete task and all note-task links |
+| GET | `/api/tags` | user | List all tags with `note_count` |
+| GET | `/api/notes/:id/tags` | user | List tags on a note |
+| POST | `/api/notes/:id/tags` | user | Add tag by `{ name }` — creates on first use (stored lowercase), links to note |
+| DELETE | `/api/notes/:id/tags/:tagId` | user | Unlink tag from note |
 
 ---
 

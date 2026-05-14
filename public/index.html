@@ -51,6 +51,8 @@
         <button class="filter-tab" data-filter="general">General</button>
       </div>
 
+      <div class="home-tag-filters" id="home-tag-filters"></div>
+
       <div class="notes-list" id="notes-list"></div>
 
       <div class="empty-state" id="notes-empty" style="display:none">
@@ -87,6 +89,14 @@
         </select>
         <input type="date" id="editor-date">
         <input type="text" id="editor-title" placeholder="Note title…" autocomplete="off">
+      </div>
+
+      <div class="editor-tags-section" id="editor-tags-section" style="display:none">
+        <div class="detail-tags-row">
+          <div id="editor-tags-list" class="detail-tags-chips"></div>
+          <input type="text" id="editor-tag-input" placeholder="Add tag…" autocomplete="off" list="editor-tags-suggestions">
+          <datalist id="editor-tags-suggestions"></datalist>
+        </div>
       </div>
 
       <div class="editor-body" id="editor-body">

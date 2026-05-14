@@ -29,8 +29,12 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 - Deleting a task removes it from all notes.
 
 ### Tags
-- Tags are free-form, case-insensitive strings.
+- Tags are free-form strings, stored lowercase (case-insensitive).
 - A note may have any number of tags; tags are created on first use.
+- Tags can be added and removed from the note detail view and the note editor (edit mode only).
+- Tag input accepts text and confirms on Enter; an autocomplete list shows existing tags.
+- The notes list shows tag chips above the list; clicking a chip filters by that tag.
+- Tag and type filters can be combined.
 
 ---
 

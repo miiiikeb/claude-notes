@@ -79,6 +79,32 @@
     }
   }
 
+  async function loadEditorTags(noteId) {
+    const section    = document.getElementById('editor-tags-section');
+    const chipsEl    = document.getElementById('editor-tags-list');
+    const suggestions = document.getElementById('editor-tags-suggestions');
+    section.style.display = '';
+    try {
+      const [tags, allTags] = await Promise.all([
+        api('GET', `/notes/${noteId}/tags`),
+        api('GET', '/tags'),
+      ]);
+      chipsEl.innerHTML = tags.map(t => `
+        <span class="tag-chip">
+          ${escHtml(t.name)}
+          <button class="tag-chip-remove" data-id="${t.id}" title="Remove">×</button>
+        </span>
+      `).join('');
+      chipsEl.querySelectorAll('.tag-chip-remove').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await api('DELETE', `/notes/${noteId}/tags/${btn.dataset.id}`);
+          await loadEditorTags(noteId);
+        });
+      });
+      suggestions.innerHTML = allTags.map(t => `<option value="${escHtml(t.name)}">`).join('');
+    } catch { /* ignore */ }
+  }
+
   async function loadNoteEditor() {
     // Parse optional note ID from hash: #noteEditor/123
     const parts = location.hash.replace('#', '').split('/');
@@ -87,11 +113,13 @@
 
     const deleteBtn = document.getElementById('btn-editor-delete');
     deleteBtn.style.display = currentId ? '' : 'none';
+    document.getElementById('editor-tags-section').style.display = 'none';
 
     if (currentId) {
       try {
         const note = await api('GET', `/notes/${currentId}`);
         populate(note);
+        await loadEditorTags(currentId);
       } catch {
         showToast('Note not found', true);
         navigate('home');
@@ -120,6 +148,19 @@
     // Ctrl/Cmd+S to save
     document.getElementById('editor-textarea').addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); }
+    });
+
+    document.getElementById('editor-tag-input').addEventListener('keydown', async (e) => {
+      if (e.key !== 'Enter') return;
+      const name = e.target.value.trim();
+      if (!name || !currentId) return;
+      try {
+        await api('POST', `/notes/${currentId}/tags`, { name });
+        e.target.value = '';
+        await loadEditorTags(currentId);
+      } catch (err) {
+        showToast(err.message || 'Failed to add tag', true);
+      }
     });
   });
 

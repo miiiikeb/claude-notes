@@ -12,6 +12,7 @@ const app = createApp({
   routes: [
     { path: '/api/notes', router: require('./routes/notes') },
     { path: '/api/tasks', router: require('./routes/tasks') },
+    { path: '/api/tags',  router: require('./routes/tags')  },
   ],
 });
 

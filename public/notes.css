@@ -210,6 +210,19 @@
 #detail-tag-input { padding: 0.2rem 0.6rem; border: 1px dashed var(--border); border-radius: 999px; font-size: 0.8rem; background: transparent; color: var(--text); width: 110px; }
 #detail-tag-input:focus { outline: none; border-color: var(--accent); }
 
+/* ── Home page tag filter chips ──────────────────────────────────────── */
+.home-tag-filters { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.85rem; }
+.home-tag-filters:empty { display: none; }
+.tag-filter-chip { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.8rem; font-weight: 500; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; transition: border-color 0.12s; }
+.tag-filter-chip:hover { border-color: var(--accent); color: var(--text); }
+.tag-filter-chip.active { background: var(--accent-light); color: var(--accent-dark); border-color: var(--accent); }
+.tag-chip-count { font-size: 0.7rem; opacity: 0.6; }
+
+/* ── Editor tags section ─────────────────────────────────────────────── */
+.editor-tags-section { padding: 0.5rem 0 0.6rem; border-bottom: 1px solid var(--border); margin-bottom: 0.6rem; }
+#editor-tag-input { padding: 0.2rem 0.6rem; border: 1px dashed var(--border); border-radius: 999px; font-size: 0.8rem; background: transparent; color: var(--text); width: 110px; }
+#editor-tag-input:focus { outline: none; border-color: var(--accent); }
+
 /* ── Inline add-task form (noteDetail) ───────────────────────────────── */
 .detail-add-task-form { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
 .detail-add-task-form input[type="text"] { flex: 1; min-width: 120px; padding: 0.28rem 0.55rem; font-size: 0.88rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
