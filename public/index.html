@@ -22,6 +22,7 @@
       </div>
       <nav class="app-nav">
         <a href="#home" class="nav-link" data-page="home">Notes</a>
+        <a href="#tasks" class="nav-link" data-page="tasks">Tasks</a>
         <a href="#admin" class="nav-link admin-only" data-page="admin" style="display:none">Admin</a>
       </nav>
       <form action="/logout" method="POST" class="logout-form">
@@ -116,6 +117,11 @@
           <h3>Tasks</h3>
           <button class="btn btn-ghost btn-sm" id="btn-add-task">+ Add task</button>
         </div>
+        <div class="detail-add-task-form" id="detail-task-add-form" style="display:none">
+          <input type="text" id="detail-new-task-title" placeholder="Task title…" autocomplete="off">
+          <button class="btn btn-primary btn-sm" id="detail-task-add-save">Add</button>
+          <button class="btn btn-ghost btn-sm" id="detail-task-add-cancel">Cancel</button>
+        </div>
         <div id="detail-tasks-list"></div>
       </div>
 
@@ -128,6 +134,47 @@
           <input type="text" id="detail-tag-input" placeholder="Add tag…" autocomplete="off" list="detail-tags-suggestions">
           <datalist id="detail-tags-suggestions"></datalist>
         </div>
+      </div>
+    </section>
+
+    <!-- TASKS PAGE -->
+    <section id="page-tasks" class="page" style="display:none">
+      <div class="page-header">
+        <h2>Tasks</h2>
+        <button class="btn btn-primary btn-sm" id="btn-new-task-page">+ New Task</button>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="active">Active</button>
+        <button class="filter-tab" data-filter="done">Done</button>
+        <button class="filter-tab" data-filter="cancelled">Cancelled</button>
+      </div>
+
+      <div class="task-create-form" id="tasks-create-form" style="display:none">
+        <input type="text" id="new-task-title" placeholder="Task title…" autocomplete="off">
+        <select id="new-task-status">
+          <option value="backlog">Backlog</option>
+          <option value="todo">Todo</option>
+          <option value="in_progress">In Progress</option>
+          <option value="blocked">Blocked</option>
+        </select>
+        <input type="date" id="new-task-due">
+        <button class="btn btn-primary btn-sm" id="tasks-create-save">Add</button>
+        <button class="btn btn-ghost btn-sm" id="tasks-create-cancel">Cancel</button>
+      </div>
+
+      <div class="tasks-list" id="tasks-list"></div>
+
+      <div class="empty-state" id="tasks-empty" style="display:none">
+        <div class="empty-state-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="8" width="32" height="32" rx="4" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M16 17h16M16 24h16M16 31h10" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>No tasks</h3>
+        <p>Create a task or add one from a note.</p>
       </div>
     </section>
 
@@ -238,6 +285,7 @@
   <script src="/home.js?v=00000000"></script>
   <script src="/noteEditor.js?v=00000000"></script>
   <script src="/noteDetail.js?v=00000000"></script>
+  <script src="/tasks.js?v=00000000"></script>
 
 </body>
 </html>

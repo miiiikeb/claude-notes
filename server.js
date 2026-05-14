@@ -11,6 +11,7 @@ const app = createApp({
   spaFallback: true,
   routes: [
     { path: '/api/notes', router: require('./routes/notes') },
+    { path: '/api/tasks', router: require('./routes/tasks') },
   ],
 });
 

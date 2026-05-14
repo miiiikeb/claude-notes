@@ -34,6 +34,31 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 
 ---
 
+## Tasks
+
+### Task CRUD
+- A task has a **title**, **status**, and an optional **due_date**.
+- Kanban statuses: `backlog → todo → in_progress → blocked → done | cancelled`.
+- Tasks can be created standalone (not linked to any note) from the Tasks page.
+- Tasks can be created and linked inline from a note detail view.
+- Deleting a task removes it from all notes; deleting a note removes its task links but not the tasks themselves.
+
+### Note detail — task linking
+- The note detail view shows tasks linked to that note.
+- "+ Add task" reveals an inline text input; pressing Enter or clicking Add creates a new task and links it.
+- The status of each linked task can be changed via a dropdown directly in the note detail.
+- A × button unlinks a task from the note (the task is not deleted).
+
+### Tasks page (standalone)
+- A dedicated Tasks page lists all tasks across the app.
+- Filter tabs: **All** / **Active** (backlog+todo+in_progress+blocked) / **Done** / **Cancelled**.
+- Each task row shows: status dropdown, title, due_date (if set), linked note count badge.
+- Clicking + on a task row expands it to show which notes it is linked to (with links to those notes).
+- Task status can be updated via the inline dropdown.
+- "+ New Task" button reveals an inline create form: title, status selector, optional due date.
+
+---
+
 ## Note detail view
 
 - Displays the note title, type badge, and note_date in a header.

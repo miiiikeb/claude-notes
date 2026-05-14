@@ -67,4 +67,50 @@ router.delete('/:id', (req, res) => {
   res.status(204).end();
 });
 
+const VALID_STATUSES = new Set(['backlog','todo','in_progress','blocked','done','cancelled']);
+
+// GET /api/notes/:id/tasks
+router.get('/:id/tasks', (req, res) => {
+  const note = db.prepare(`SELECT id FROM notes WHERE id = ?`).get(req.params.id);
+  if (!note) return res.status(404).json({ error: 'Not found' });
+  const tasks = db.prepare(`
+    SELECT t.* FROM tasks t
+    JOIN note_tasks nt ON nt.task_id = t.id
+    WHERE nt.note_id = ?
+    ORDER BY t.updated_at DESC
+  `).all(req.params.id);
+  res.json(tasks);
+});
+
+// POST /api/notes/:id/tasks — link existing task (task_id) or create+link new task (title)
+router.post('/:id/tasks', express.json(), (req, res) => {
+  const note = db.prepare(`SELECT id FROM notes WHERE id = ?`).get(req.params.id);
+  if (!note) return res.status(404).json({ error: 'Not found' });
+
+  let taskId = req.body.task_id;
+  if (taskId) {
+    if (!db.prepare(`SELECT id FROM tasks WHERE id = ?`).get(taskId))
+      return res.status(404).json({ error: 'Task not found' });
+  } else {
+    const { title, status = 'backlog', due_date = null } = req.body;
+    if (!title?.trim())              return res.status(400).json({ error: 'task_id or title required' });
+    if (!VALID_STATUSES.has(status)) return res.status(400).json({ error: 'Invalid status' });
+    const r = db.prepare(`INSERT INTO tasks (title, status, due_date) VALUES (?, ?, ?)`)
+      .run(title.trim(), status, due_date || null);
+    taskId = r.lastInsertRowid;
+  }
+
+  db.prepare(`INSERT OR IGNORE INTO note_tasks (note_id, task_id) VALUES (?, ?)`)
+    .run(req.params.id, taskId);
+
+  res.status(201).json(db.prepare(`SELECT * FROM tasks WHERE id = ?`).get(taskId));
+});
+
+// DELETE /api/notes/:id/tasks/:taskId — unlink only (task is not deleted)
+router.delete('/:id/tasks/:taskId', (req, res) => {
+  db.prepare(`DELETE FROM note_tasks WHERE note_id = ? AND task_id = ?`)
+    .run(req.params.id, req.params.taskId);
+  res.status(204).end();
+});
+
 module.exports = router;

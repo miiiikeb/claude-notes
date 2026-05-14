@@ -34,12 +34,14 @@
 server.js              Thin wrapper — createApp() + project routes
 db.js                  Thin wrapper — imports std-platform db + project tables
 routes/
-  (project routes here)
+  notes.js             Notes CRUD + note-task and note-tag sub-resources
+  tasks.js             Tasks CRUD + GET /:id/notes
 public/
   index.html           SPA shell — nav, page sections, confirm modal, toast
   home.js              Notes list page (filter, render, navigate)
   noteEditor.js        Note create/edit page (markdown, split preview)
   noteDetail.js        Note detail page (rendered markdown, tasks, tags)
+  tasks.js             Tasks page (filter, create, status update, linked notes)
   marked.min.js        Markdown renderer (marked.js UMD bundle)
   notes.css            Project CSS overrides and component styles
 std-platform/          Git submodule — platform runtime (read-only)
@@ -97,6 +99,14 @@ Auth, admin/users, admin/todo are all handled by std-platform.
 | GET | `/api/notes/:id` | user | Get single note (includes body) |
 | PATCH | `/api/notes/:id` | user | Update note fields (partial) |
 | DELETE | `/api/notes/:id` | user | Delete note (cascades note_tasks, note_tags) |
+| GET | `/api/notes/:id/tasks` | user | List tasks linked to a note |
+| POST | `/api/notes/:id/tasks` | user | Link existing task (`{ task_id }`) or create+link (`{ title, status?, due_date? }`) |
+| DELETE | `/api/notes/:id/tasks/:taskId` | user | Unlink task from note (task is not deleted) |
+| GET | `/api/tasks` | user | List all tasks with `note_count`. Optional `?status=active\|done\|cancelled\|...` |
+| POST | `/api/tasks` | user | Create task. Body: `{ title, status?, due_date? }` |
+| GET | `/api/tasks/:id/notes` | user | List notes linked to a task |
+| PATCH | `/api/tasks/:id` | user | Update task fields (partial) |
+| DELETE | `/api/tasks/:id` | user | Delete task and all note-task links |
 
 ---
 

@@ -5,6 +5,8 @@
 
   // ── Tasks (wired in #5) ───────────────────────────────────────────────────
 
+  const ALL_STATUSES = ['backlog','todo','in_progress','blocked','done','cancelled'];
+
   async function loadTasks(noteId) {
     const list = document.getElementById('detail-tasks-list');
     try {
@@ -15,12 +17,26 @@
       }
       list.innerHTML = tasks.map(t => `
         <div class="detail-task-row" data-task-id="${t.id}">
-          <span class="task-status-badge task-status--${t.status}">${t.status.replace('_', ' ')}</span>
+          <select class="task-status-select task-status-select--sm" data-id="${t.id}" data-status="${t.status}">
+            ${ALL_STATUSES.map(s => `<option value="${s}"${s === t.status ? ' selected' : ''}>${s.replace('_',' ')}</option>`).join('')}
+          </select>
           <span class="detail-task-title">${escHtml(t.title)}</span>
           ${t.due_date ? `<span class="detail-task-due">${t.due_date}</span>` : ''}
           <button class="btn btn-ghost btn-sm detail-task-unlink" data-id="${t.id}" title="Unlink">×</button>
         </div>
       `).join('');
+
+      list.querySelectorAll('.task-status-select').forEach(sel => {
+        sel.addEventListener('change', async () => {
+          sel.dataset.status = sel.value;
+          try {
+            await api('PATCH', `/tasks/${sel.dataset.id}`, { status: sel.value });
+          } catch {
+            showToast('Failed to update status', true);
+            await loadTasks(noteId);
+          }
+        });
+      });
 
       list.querySelectorAll('.detail-task-unlink').forEach(btn => {
         btn.addEventListener('click', () => unlinkTask(noteId, btn.dataset.id));
@@ -124,8 +140,37 @@
     document.getElementById('btn-detail-edit').addEventListener('click', () => {
       if (currentNote) location.hash = 'noteEditor/' + currentNote.id;
     });
+    const addTaskForm   = document.getElementById('detail-task-add-form');
+    const addTaskTitle  = document.getElementById('detail-new-task-title');
+    const addTaskSave   = document.getElementById('detail-task-add-save');
+    const addTaskCancel = document.getElementById('detail-task-add-cancel');
+
     document.getElementById('btn-add-task').addEventListener('click', () => {
-      showToast('Task creation coming in next update');
+      addTaskForm.style.display = '';
+      addTaskTitle.focus();
+    });
+
+    addTaskCancel.addEventListener('click', () => {
+      addTaskForm.style.display = 'none';
+      addTaskTitle.value = '';
+    });
+
+    addTaskSave.addEventListener('click', async () => {
+      const title = addTaskTitle.value.trim();
+      if (!title) { showToast('Title required', true); return; }
+      try {
+        await api('POST', `/notes/${currentNote.id}/tasks`, { title });
+        addTaskTitle.value = '';
+        addTaskForm.style.display = 'none';
+        await loadTasks(currentNote.id);
+      } catch {
+        showToast('Failed to add task', true);
+      }
+    });
+
+    addTaskTitle.addEventListener('keydown', e => {
+      if (e.key === 'Enter') addTaskSave.click();
+      if (e.key === 'Escape') addTaskCancel.click();
     });
   });
 
