@@ -1,6 +1,8 @@
 # Claude Code Instructions — Notes
 
 @std-platform/CLAUDE.md
+@deploy-lib/deploy-workflow.md
+@deploy-lib/framework.md
 
 ## Reading order for new sessions
 
@@ -79,7 +81,18 @@ If the user says **"issues"** with no other context: run `gh issue list --repo m
 
 ---
 
+## Tests
+
+Run with `npm test`. Tests run automatically inside `deploy.sh` and abort on failure.
+
+Each test file must set `process.env.DB_PATH = ':memory:'` before any `require()` so `std-platform/db.js` uses an in-memory database.
+
+When adding a new route, add corresponding integration tests before deploying.
+
+---
+
 ## Key rules
 
 - Schema changes go in `db.js` using `CREATE TABLE IF NOT EXISTS` or `ALTER TABLE`.
 - `RequirementSet.md` must be committed before running `deploy.sh`.
+- When fixing a GitHub issue, reference `#NNN` in the commit message — the deploy script labels and comments on it automatically.
