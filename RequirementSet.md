@@ -11,9 +11,23 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 
 ---
 
-## App-specific features
+## Data model
 
-_Replace this section with Notes's features as you build them out._
+### Notes
+- A note has a **type** (`meeting`, `daily`, `general`), a **note_date** (the date the note is about), a **title**, and a **body** (markdown).
+- Multiple notes of any type may share the same `note_date` — no uniqueness enforced.
+- Notes are full-text indexed (FTS5 on title + body) for search.
+
+### Tasks
+- A task has a **title**, **status**, and an optional **due_date**.
+- Kanban statuses: `backlog → todo → in_progress → blocked → done | cancelled`.
+- A task may be linked to any number of notes (many-to-many via `note_tasks`).
+- Deleting a note removes its task links but not the tasks themselves.
+- Deleting a task removes it from all notes.
+
+### Tags
+- Tags are free-form, case-insensitive strings.
+- A note may have any number of tags; tags are created on first use.
 
 ---
 
