@@ -3,6 +3,8 @@
 _Living document. Update before each deployment to reflect functional changes._
 _The deploy script warns if this file hasn't changed since the last deploy tag._
 
+_2026-05-14: Bug fix — notes list blank on Android due to non-standard SQLite date format being parsed incorrectly. No functional requirement changes._
+
 ---
 
 ## Platform baseline (inherited from std-platform)
