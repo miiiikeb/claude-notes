@@ -31,6 +31,15 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 
 ---
 
+## Notes list
+
+- The home page displays all notes ordered by most recently updated first.
+- Each note shows its type badge (meeting/daily/general), note_date, title, and a relative updated time.
+- Notes can be filtered by type: All, Meeting, Daily, General.
+- A "New Note" button navigates to the note editor.
+
+---
+
 ## Resolved Issues
 
 _None yet._
