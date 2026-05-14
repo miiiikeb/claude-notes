@@ -10,9 +10,7 @@ const app = createApp({
   publicDir:   path.join(__dirname, 'public'),
   spaFallback: true,
   routes: [
-    // Add your project routes here, e.g.:
-    // { path: '/api/widgets', router: require('./routes/widgets') },
-    // { path: '/api/admin/my-feature', router: require('./routes/myFeature'), adminOnly: true },
+    { path: '/api/notes', router: require('./routes/notes') },
   ],
 });
 

@@ -37,8 +37,8 @@ routes/
   (project routes here)
 public/
   index.html           SPA shell — nav, page sections, confirm modal, toast
-  home.js              Home page starter (replace with project content)
-  (project page scripts)
+  home.js              Notes list page (filter, render, navigate)
+  notes.css            Project CSS overrides and component styles
 std-platform/          Git submodule — platform runtime (read-only)
 deploy-lib/            Git submodule — deploy/rollback scripts (read-only)
 scripts/
@@ -66,7 +66,12 @@ _Platform tables (users, otp_tokens) are created by std-platform/db.js._
 
 | Table | Columns | Purpose |
 |---|---|---|
-| _(add project tables here)_ | | |
+| `notes` | `id, type, note_date, title, body, created_at, updated_at` | Notes of type meeting/daily/general |
+| `tasks` | `id, title, status, due_date, created_at, updated_at` | Tasks with kanban status |
+| `note_tasks` | `note_id, task_id` | Many-to-many note↔task links |
+| `tags` | `id, name` | Free-form case-insensitive tags |
+| `note_tags` | `note_id, tag_id` | Many-to-many note↔tag links |
+| `notes_fts` | virtual (FTS5) | Full-text index on notes title+body |
 
 ### Conventions
 - Add tables in `db.js` using `CREATE TABLE IF NOT EXISTS`
@@ -84,7 +89,11 @@ Auth, admin/users, admin/todo are all handled by std-platform.
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| _(add project endpoints here)_ | | | |
+| GET | `/api/notes` | user | List notes, ordered by `updated_at` desc. Optional `?type=meeting\|daily\|general` |
+| POST | `/api/notes` | user | Create note. Body: `{ type, note_date, title, body? }` |
+| GET | `/api/notes/:id` | user | Get single note (includes body) |
+| PATCH | `/api/notes/:id` | user | Update note fields (partial) |
+| DELETE | `/api/notes/:id` | user | Delete note (cascades note_tasks, note_tags) |
 
 ---
 
