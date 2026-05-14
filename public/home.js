@@ -4,12 +4,15 @@
   let activeFilter = '';
 
   function timeAgo(iso) {
-    const secs = Math.floor((Date.now() - new Date(iso + 'Z').getTime()) / 1000);
+    // SQLite datetime() uses a space separator; replace with T for cross-browser ISO 8601 parsing
+    const ms = new Date(iso.replace(' ', 'T') + 'Z').getTime();
+    if (!ms) return '';
+    const secs = Math.floor((Date.now() - ms) / 1000);
     if (secs < 60)         return 'just now';
     if (secs < 3600)       return `${Math.floor(secs / 60)}m ago`;
     if (secs < 86400)      return `${Math.floor(secs / 3600)}h ago`;
     if (secs < 86400 * 7)  return `${Math.floor(secs / 86400)}d ago`;
-    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    return new Date(iso.replace(' ', 'T') + 'Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   }
 
   function renderNotes(notes) {
@@ -41,9 +44,13 @@
   }
 
   async function fetchAndRender() {
-    const qs = activeFilter ? `?type=${activeFilter}` : '';
-    const notes = await api('GET', `/notes${qs}`);
-    renderNotes(notes);
+    try {
+      const qs = activeFilter ? `?type=${activeFilter}` : '';
+      const notes = await api('GET', `/notes${qs}`);
+      renderNotes(notes);
+    } catch (e) {
+      showToast('Failed to load notes', true);
+    }
   }
 
   async function loadHome() {
