@@ -34,6 +34,18 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 
 ---
 
+## Search
+
+- A search bar at the top of the Notes list page allows searching across all note titles and bodies.
+- Search is debounced (300ms) and fires as-you-type once at least 2 characters are entered.
+- Results show each matching note's type badge, note_date, title, and a highlighted snippet of matching body text (matching terms shown in bold amber).
+- Results are ordered by FTS5 relevance rank.
+- Clicking a result navigates to the note detail view.
+- Clearing the search input restores the normal notes list with filter tabs.
+- Filter tabs are hidden while a search is active.
+
+---
+
 ## Tasks
 
 ### Task CRUD

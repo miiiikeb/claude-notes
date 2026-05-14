@@ -32,6 +32,35 @@ router.post('/', express.json(), (req, res) => {
   res.status(201).json(note);
 });
 
+// GET /api/notes/search?q=
+router.get('/search', (req, res) => {
+  const q = (req.query.q || '').trim();
+  if (q.length < 2) return res.json([]);
+
+  // Tokenize, strip FTS5 special chars, prefix-match the last term
+  const terms = q.split(/\s+/).filter(Boolean).map((t, i, arr) => {
+    const safe = t.replace(/['"*()^:{}!]/g, '').trim();
+    return safe ? (i === arr.length - 1 ? safe + '*' : safe) : null;
+  }).filter(Boolean);
+
+  if (!terms.length) return res.json([]);
+
+  try {
+    const rows = db.prepare(`
+      SELECT n.id, n.type, n.note_date, n.title,
+        snippet(notes_fts, 1, '<<<', '>>>', '…', 12) AS snippet
+      FROM notes_fts
+      JOIN notes n ON n.id = notes_fts.rowid
+      WHERE notes_fts MATCH ?
+      ORDER BY notes_fts.rank
+      LIMIT 50
+    `).all(terms.join(' '));
+    res.json(rows);
+  } catch {
+    res.json([]);
+  }
+});
+
 // GET /api/notes/:id
 router.get('/:id', (req, res) => {
   const note = db.prepare(`SELECT * FROM notes WHERE id = ?`).get(req.params.id);

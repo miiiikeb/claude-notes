@@ -95,6 +95,7 @@ Auth, admin/users, admin/todo are all handled by std-platform.
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/api/notes` | user | List notes, ordered by `updated_at` desc. Optional `?type=meeting\|daily\|general` |
+| GET | `/api/notes/search` | user | FTS5 full-text search. `?q=term` — returns `{ id, type, note_date, title, snippet }[]` ordered by relevance |
 | POST | `/api/notes` | user | Create note. Body: `{ type, note_date, title, body? }` |
 | GET | `/api/notes/:id` | user | Get single note (includes body) |
 | PATCH | `/api/notes/:id` | user | Update note fields (partial) |

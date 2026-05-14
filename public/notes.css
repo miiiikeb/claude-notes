@@ -38,12 +38,31 @@
 .filter-tab:hover  { background: var(--bg); color: var(--text); }
 .filter-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
 
+/* ── Search bar ──────────────────────────────────────────────────────── */
+.home-search-bar { margin-bottom: 1rem; }
+.home-search-bar input[type="search"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+.home-search-bar input[type="search"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(176,125,58,0.12);
+}
+
 /* ── Notes list ──────────────────────────────────────────────────────── */
 .notes-list { display: flex; flex-direction: column; gap: 0.5rem; }
 
 .note-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -55,6 +74,24 @@
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .note-row:hover { border-color: var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+
+.search-snippet {
+  flex-basis: 100%;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: -0.3rem;
+}
+.search-snippet mark {
+  background: rgba(176,125,58,0.18);
+  color: var(--accent-dark);
+  border-radius: 2px;
+  font-weight: 600;
+  font-style: normal;
+}
+.search-no-results { text-align: center; color: var(--text-muted); padding: 2rem 0; font-size: 0.9rem; }
 
 .note-row-title { flex: 1; font-weight: 500; font-size: 0.95rem; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .note-row-date  { font-size: 0.8rem; color: var(--text-muted); flex-shrink: 0; }
