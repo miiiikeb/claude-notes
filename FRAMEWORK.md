@@ -39,6 +39,7 @@ public/
   index.html           SPA shell — nav, page sections, confirm modal, toast
   home.js              Notes list page (filter, render, navigate)
   noteEditor.js        Note create/edit page (markdown, split preview)
+  noteDetail.js        Note detail page (rendered markdown, tasks, tags)
   marked.min.js        Markdown renderer (marked.js UMD bundle)
   notes.css            Project CSS overrides and component styles
 std-platform/          Git submodule — platform runtime (read-only)

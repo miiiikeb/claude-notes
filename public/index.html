@@ -94,6 +94,43 @@
       </div>
     </section>
 
+    <!-- NOTE DETAIL PAGE -->
+    <section id="page-noteDetail" class="page" style="display:none">
+      <div class="page-header">
+        <button class="btn btn-ghost btn-sm" id="btn-detail-back">← Notes</button>
+        <button class="btn btn-ghost btn-sm" id="btn-detail-edit">Edit</button>
+      </div>
+
+      <div class="note-detail-header">
+        <div class="note-detail-meta">
+          <span class="type-badge" id="detail-type-badge"></span>
+          <span class="note-detail-date" id="detail-date"></span>
+        </div>
+        <h1 class="note-detail-title" id="detail-title"></h1>
+      </div>
+
+      <div class="markdown-body note-detail-body" id="detail-body"></div>
+
+      <div class="note-detail-section" id="detail-tasks-section">
+        <div class="note-detail-section-header">
+          <h3>Tasks</h3>
+          <button class="btn btn-ghost btn-sm" id="btn-add-task">+ Add task</button>
+        </div>
+        <div id="detail-tasks-list"></div>
+      </div>
+
+      <div class="note-detail-section" id="detail-tags-section">
+        <div class="note-detail-section-header">
+          <h3>Tags</h3>
+        </div>
+        <div class="detail-tags-row">
+          <div id="detail-tags-list" class="detail-tags-chips"></div>
+          <input type="text" id="detail-tag-input" placeholder="Add tag…" autocomplete="off" list="detail-tags-suggestions">
+          <datalist id="detail-tags-suggestions"></datalist>
+        </div>
+      </div>
+    </section>
+
     <!-- ADMIN PAGE — provided by std-platform (admin.js + routes/admin.js + routes/todo.js) -->
     <section id="page-admin" class="page" style="display:none">
       <div class="page-header">
@@ -200,6 +237,7 @@
   <script src="/marked.min.js"></script>
   <script src="/home.js"></script>
   <script src="/noteEditor.js"></script>
+  <script src="/noteDetail.js"></script>
 
 </body>
 </html>

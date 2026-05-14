@@ -31,6 +31,17 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 
 ---
 
+## Note detail view
+
+- Displays the note title, type badge, and note_date in a header.
+- Renders the note body as markdown.
+- Edit button navigates to the note editor for the current note.
+- Shows a linked tasks section (populated in #5) and a tags section (populated in #8).
+- Tags can be added by typing into an inline input (Enter to confirm) and removed with a × button.
+- Clicking a note in the list navigates to the detail view.
+
+---
+
 ## Note editor
 
 - A note has a type (meeting/daily/general), note_date, title, and a markdown body.

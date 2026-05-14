@@ -32,10 +32,10 @@
 
     list.querySelectorAll('.note-row').forEach(row => {
       row.addEventListener('click', () => {
-        location.hash = 'noteEditor/' + row.dataset.id;
+        location.hash = 'noteDetail/' + row.dataset.id;
       });
       row.addEventListener('keydown', e => {
-        if (e.key === 'Enter') location.hash = 'noteEditor/' + row.dataset.id;
+        if (e.key === 'Enter') location.hash = 'noteDetail/' + row.dataset.id;
       });
     });
   }
