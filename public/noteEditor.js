@@ -11,7 +11,7 @@
 
   function renderPreview() {
     const src = document.getElementById('editor-textarea').value;
-    document.getElementById('editor-preview').innerHTML = marked.parse(src);
+    document.getElementById('editor-preview').innerHTML = DOMPurify.sanitize(marked.parse(src));
   }
 
   function setPreviewVisible(on) {
