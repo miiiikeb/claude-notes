@@ -31,6 +31,19 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 
 ---
 
+## Note editor
+
+- A note has a type (meeting/daily/general), note_date, title, and a markdown body.
+- The editor shows a textarea on the left and a live-rendered markdown preview on the right (split view). The preview can be toggled.
+- note_date defaults to today.
+- Saving a new note POSTs to the API and updates the URL to the edit URL (`#noteEditor/{id}`).
+- Editing an existing note PATCHes the API.
+- Ctrl/Cmd+S saves the note.
+- The delete button (edit mode only) prompts for confirmation before deleting and returns to the notes list.
+- Markdown rendering is client-side via marked.js.
+
+---
+
 ## Notes list
 
 - The home page displays all notes ordered by most recently updated first.

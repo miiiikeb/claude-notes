@@ -63,14 +63,34 @@
       </div>
     </section>
 
-    <!-- NOTE EDITOR PAGE — stub, built in issue #3 -->
+    <!-- NOTE EDITOR PAGE -->
     <section id="page-noteEditor" class="page" style="display:none">
       <div class="page-header">
-        <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Notes</button>
-        <h2>New Note</h2>
+        <button class="btn btn-ghost btn-sm" id="btn-editor-back">← Notes</button>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="btn btn-ghost btn-sm" id="btn-preview-toggle">Preview</button>
+          <button class="btn btn-danger btn-sm" id="btn-editor-delete" style="display:none">Delete</button>
+          <button class="btn btn-primary btn-sm" id="btn-editor-save">Save</button>
+        </div>
       </div>
-      <div class="empty-state">
-        <p>Note editor coming soon.</p>
+
+      <div class="editor-meta">
+        <select id="editor-type">
+          <option value="meeting">Meeting</option>
+          <option value="daily">Daily</option>
+          <option value="general">General</option>
+        </select>
+        <input type="date" id="editor-date">
+        <input type="text" id="editor-title" placeholder="Note title…" autocomplete="off">
+      </div>
+
+      <div class="editor-body" id="editor-body">
+        <div class="editor-write-pane">
+          <textarea id="editor-textarea" placeholder="Write in markdown…" spellcheck="true"></textarea>
+        </div>
+        <div class="editor-preview-pane" id="editor-preview-pane">
+          <div class="editor-preview-content markdown-body" id="editor-preview"></div>
+        </div>
       </div>
     </section>
 
@@ -177,7 +197,9 @@
   <script src="/app.js"></script>
   <script src="/admin.js"></script>
   <!-- Project scripts -->
+  <script src="/marked.min.js"></script>
   <script src="/home.js"></script>
+  <script src="/noteEditor.js"></script>
 
 </body>
 </html>
