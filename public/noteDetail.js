@@ -145,6 +145,8 @@
     });
     const addTaskForm   = document.getElementById('detail-task-add-form');
     const addTaskTitle  = document.getElementById('detail-new-task-title');
+    const addTaskStatus = document.getElementById('detail-new-task-status');
+    const addTaskDue    = document.getElementById('detail-new-task-due');
     const addTaskSave   = document.getElementById('detail-task-add-save');
     const addTaskCancel = document.getElementById('detail-task-add-cancel');
 
@@ -153,27 +155,41 @@
       addTaskTitle.focus();
     });
 
-    addTaskCancel.addEventListener('click', () => {
+    function resetAddTaskForm() {
+      addTaskTitle.value  = '';
+      addTaskStatus.value = 'backlog';
+      addTaskDue.value    = '';
       addTaskForm.style.display = 'none';
-      addTaskTitle.value = '';
-    });
+    }
 
-    addTaskSave.addEventListener('click', async () => {
-      const title = addTaskTitle.value.trim();
+    addTaskCancel.addEventListener('click', resetAddTaskForm);
+
+    async function saveTask() {
+      const title    = addTaskTitle.value.trim();
+      const status   = addTaskStatus.value;
+      const due_date = addTaskDue.value || null;
       if (!title) { showToast('Title required', true); return; }
       try {
-        await api('POST', `/notes/${currentNote.id}/tasks`, { title });
-        addTaskTitle.value = '';
-        addTaskForm.style.display = 'none';
+        await api('POST', `/notes/${currentNote.id}/tasks`, { title, status, due_date });
+        resetAddTaskForm();
         await loadTasks(currentNote.id);
       } catch {
         showToast('Failed to add task', true);
       }
-    });
+    }
+
+    addTaskSave.addEventListener('click', saveTask);
 
     addTaskTitle.addEventListener('keydown', e => {
-      if (e.key === 'Enter') addTaskSave.click();
-      if (e.key === 'Escape') addTaskCancel.click();
+      if (e.key === 'Enter') saveTask();
+      if (e.key === 'Escape') resetAddTaskForm();
+    });
+    addTaskStatus.addEventListener('keydown', e => {
+      if (e.key === 'Escape') resetAddTaskForm();
+    });
+    addTaskDue.addEventListener('keydown', e => {
+      if (e.key === 'Enter') saveTask();
+      if (e.key === 'Escape') resetAddTaskForm();
     });
   });
 

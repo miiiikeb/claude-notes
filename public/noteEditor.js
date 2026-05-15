@@ -83,6 +83,8 @@
     document.getElementById('editor-title').value = '';
     quill.setText('');
     setMode('rt');
+    document.getElementById('editor-tasks-section').style.display = 'none';
+    document.getElementById('editor-task-add-form').style.display = 'none';
   }
 
   // ── Save / delete ──────────────────────────────────────────────────────────
@@ -140,6 +142,28 @@
 
   // ── Tags ───────────────────────────────────────────────────────────────────
 
+  async function loadEditorTasks(noteId) {
+    const section = document.getElementById('editor-tasks-section');
+    const list    = document.getElementById('editor-tasks-list');
+    section.style.display = '';
+    try {
+      const tasks = await api('GET', `/notes/${noteId}/tasks`);
+      list.innerHTML = tasks.map(t => `
+        <span class="editor-task-chip">
+          <span class="task-status-badge task-status--${t.status}">${t.status.replace('_', ' ')}</span>
+          ${escHtml(t.title)}
+          <button class="task-chip-remove" data-id="${t.id}" title="Unlink">×</button>
+        </span>
+      `).join('');
+      list.querySelectorAll('.task-chip-remove').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await api('DELETE', `/notes/${noteId}/tasks/${btn.dataset.id}`);
+          await loadEditorTasks(noteId);
+        });
+      });
+    } catch { /* ignore */ }
+  }
+
   async function loadEditorTags(noteId) {
     const section     = document.getElementById('editor-tags-section');
     const chipsEl     = document.getElementById('editor-tags-list');
@@ -181,7 +205,7 @@
       try {
         const note = await api('GET', `/notes/${currentId}`);
         populate(note);
-        await loadEditorTags(currentId);
+        await Promise.all([loadEditorTags(currentId), loadEditorTasks(currentId)]);
       } catch {
         showToast('Note not found', true);
         navigate('home');
@@ -235,6 +259,52 @@
     };
     document.getElementById('editor-textarea').addEventListener('keydown', saveOnCtrlS);
     document.getElementById('editor-quill').addEventListener('keydown', saveOnCtrlS);
+
+    const editorTaskForm   = document.getElementById('editor-task-add-form');
+    const editorTaskTitle  = document.getElementById('editor-new-task-title');
+    const editorTaskStatus = document.getElementById('editor-new-task-status');
+    const editorTaskDue    = document.getElementById('editor-new-task-due');
+
+    function resetEditorTaskForm() {
+      editorTaskTitle.value  = '';
+      editorTaskStatus.value = 'backlog';
+      editorTaskDue.value    = '';
+      editorTaskForm.style.display = 'none';
+    }
+
+    async function saveEditorTask() {
+      const title    = editorTaskTitle.value.trim();
+      const status   = editorTaskStatus.value;
+      const due_date = editorTaskDue.value || null;
+      if (!title || !currentId) return;
+      try {
+        await api('POST', `/notes/${currentId}/tasks`, { title, status, due_date });
+        resetEditorTaskForm();
+        await loadEditorTasks(currentId);
+      } catch (err) {
+        showToast(err.message || 'Failed to add task', true);
+      }
+    }
+
+    document.getElementById('btn-editor-add-task').addEventListener('click', () => {
+      editorTaskForm.style.display = '';
+      editorTaskTitle.focus();
+    });
+
+    document.getElementById('editor-task-add-save').addEventListener('click', saveEditorTask);
+    document.getElementById('editor-task-add-cancel').addEventListener('click', resetEditorTaskForm);
+
+    editorTaskTitle.addEventListener('keydown', e => {
+      if (e.key === 'Enter') saveEditorTask();
+      if (e.key === 'Escape') resetEditorTaskForm();
+    });
+    editorTaskStatus.addEventListener('keydown', e => {
+      if (e.key === 'Escape') resetEditorTaskForm();
+    });
+    editorTaskDue.addEventListener('keydown', e => {
+      if (e.key === 'Enter') saveEditorTask();
+      if (e.key === 'Escape') resetEditorTaskForm();
+    });
 
     document.getElementById('editor-tag-input').addEventListener('keydown', async (e) => {
       if (e.key !== 'Enter') return;

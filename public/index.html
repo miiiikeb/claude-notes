@@ -101,6 +101,25 @@
         </div>
       </div>
 
+      <div class="editor-tasks-section" id="editor-tasks-section" style="display:none">
+        <div class="editor-tasks-row">
+          <div id="editor-tasks-list"></div>
+          <button class="btn btn-ghost btn-sm" id="btn-editor-add-task">+ Add task</button>
+        </div>
+        <div class="detail-add-task-form" id="editor-task-add-form" style="display:none">
+          <input type="text" id="editor-new-task-title" placeholder="Task title…" autocomplete="off">
+          <select id="editor-new-task-status">
+            <option value="backlog">Backlog</option>
+            <option value="todo">Todo</option>
+            <option value="in_progress">In Progress</option>
+            <option value="blocked">Blocked</option>
+          </select>
+          <input type="date" id="editor-new-task-due">
+          <button class="btn btn-primary btn-sm" id="editor-task-add-save">Add</button>
+          <button class="btn btn-ghost btn-sm" id="editor-task-add-cancel">Cancel</button>
+        </div>
+      </div>
+
       <div class="editor-body" id="editor-body">
         <div class="editor-rt-pane" id="editor-rt-pane">
           <div id="editor-quill"></div>
@@ -138,6 +157,13 @@
         </div>
         <div class="detail-add-task-form" id="detail-task-add-form" style="display:none">
           <input type="text" id="detail-new-task-title" placeholder="Task title…" autocomplete="off">
+          <select id="detail-new-task-status">
+            <option value="backlog">Backlog</option>
+            <option value="todo">Todo</option>
+            <option value="in_progress">In Progress</option>
+            <option value="blocked">Blocked</option>
+          </select>
+          <input type="date" id="detail-new-task-due">
           <button class="btn btn-primary btn-sm" id="detail-task-add-save">Add</button>
           <button class="btn btn-ghost btn-sm" id="detail-task-add-cancel">Cancel</button>
         </div>

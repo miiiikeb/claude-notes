@@ -286,6 +286,27 @@
 #editor-tag-input { padding: 0.2rem 0.6rem; border: 1px dashed var(--border); border-radius: 999px; font-size: 0.8rem; background: transparent; color: var(--text); width: 110px; }
 #editor-tag-input:focus { outline: none; border-color: var(--accent); }
 
+/* ── Editor tasks section ────────────────────────────────────────────── */
+.editor-tasks-section { padding: 0.5rem 0 0.6rem; border-bottom: 1px solid var(--border); margin-bottom: 0.6rem; }
+.editor-tasks-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+#editor-tasks-list { display: contents; }
+.editor-task-chip { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 0.18rem 0.4rem; border-radius: 6px; font-size: 0.82rem; }
+.task-chip-remove { background: none; border: none; cursor: pointer; color: var(--text-muted); opacity: 0.7; padding: 0; line-height: 1; font-size: 0.9rem; }
+.task-chip-remove:hover { opacity: 1; }
+
+/* ── Add-task form fields (shared: detail + editor) ──────────────────── */
+.detail-add-task-form select,
+.detail-add-task-form input[type="date"] {
+  padding: 0.28rem 0.45rem;
+  font-size: 0.88rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+}
+.detail-add-task-form select:focus,
+.detail-add-task-form input[type="date"]:focus { outline: none; border-color: var(--accent); }
+
 /* ── Inline add-task form (noteDetail) ───────────────────────────────── */
 .detail-add-task-form { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
 .detail-add-task-form input[type="text"] { flex: 1; min-width: 120px; padding: 0.28rem 0.55rem; font-size: 0.88rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }

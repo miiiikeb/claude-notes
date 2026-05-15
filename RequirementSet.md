@@ -77,9 +77,16 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 
 ### Note detail — task linking
 - The note detail view shows tasks linked to that note.
-- "+ Add task" reveals an inline text input; pressing Enter or clicking Add creates a new task and links it.
+- "+ Add task" reveals an inline form with title, status (default: backlog), and optional due date; pressing Enter on the title or due date field (or clicking Add) creates and links the task.
+- Status and due date fields can be skipped with Tab; only the title is required.
 - The status of each linked task can be changed via a dropdown directly in the note detail.
 - A × button unlinks a task from the note (the task is not deleted).
+
+### Note editor — task creation
+- The note editor shows a Tasks section for existing notes (not shown when creating a new note).
+- Linked tasks appear as chips showing the status badge and title; clicking × unlinks the task.
+- "+ Add task" reveals the same expanded inline form (title, status, due date) as the detail view.
+- New tasks created from the editor are immediately linked to the note.
 
 ### Tasks page (standalone)
 - A dedicated Tasks page lists all tasks across the app.
