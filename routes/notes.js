@@ -4,7 +4,8 @@ const express = require('express');
 const router  = express.Router();
 const db      = require('../db');
 
-const VALID_TYPES = new Set(['meeting', 'daily', 'general']);
+const VALID_TYPES   = new Set(['meeting', 'daily', 'general']);
+const VALID_FORMATS = new Set(['md', 'html']);
 
 // GET /api/notes?type=meeting|daily|general&tag=name
 router.get('/', (req, res) => {
@@ -36,14 +37,15 @@ router.get('/', (req, res) => {
 
 // POST /api/notes
 router.post('/', express.json(), (req, res) => {
-  const { type, note_date, title, body = '' } = req.body;
-  if (!VALID_TYPES.has(type))  return res.status(400).json({ error: 'Invalid type' });
-  if (!note_date)              return res.status(400).json({ error: 'note_date required' });
-  if (!title?.trim())          return res.status(400).json({ error: 'title required' });
+  const { type, note_date, title, body = '', format = 'html' } = req.body;
+  if (!VALID_TYPES.has(type))     return res.status(400).json({ error: 'Invalid type' });
+  if (!note_date)                 return res.status(400).json({ error: 'note_date required' });
+  if (!title?.trim())             return res.status(400).json({ error: 'title required' });
+  if (!VALID_FORMATS.has(format)) return res.status(400).json({ error: 'Invalid format' });
 
   const result = db.prepare(
-    `INSERT INTO notes (type, note_date, title, body) VALUES (?, ?, ?, ?)`
-  ).run(type, note_date, title.trim(), body);
+    `INSERT INTO notes (type, note_date, title, body, format) VALUES (?, ?, ?, ?, ?)`
+  ).run(type, note_date, title.trim(), body, format);
 
   const note = db.prepare(`SELECT * FROM notes WHERE id = ?`).get(result.lastInsertRowid);
   res.status(201).json(note);
@@ -94,14 +96,16 @@ router.patch('/:id', express.json(), (req, res) => {
   const note_date = req.body.note_date ?? note.note_date;
   const title     = req.body.title     ?? note.title;
   const body      = req.body.body      ?? note.body;
+  const format    = req.body.format    ?? note.format;
 
-  if (!VALID_TYPES.has(type))  return res.status(400).json({ error: 'Invalid type' });
-  if (!note_date)              return res.status(400).json({ error: 'note_date required' });
-  if (!String(title).trim())   return res.status(400).json({ error: 'title required' });
+  if (!VALID_TYPES.has(type))     return res.status(400).json({ error: 'Invalid type' });
+  if (!note_date)                 return res.status(400).json({ error: 'note_date required' });
+  if (!String(title).trim())      return res.status(400).json({ error: 'title required' });
+  if (!VALID_FORMATS.has(format)) return res.status(400).json({ error: 'Invalid format' });
 
   db.prepare(
-    `UPDATE notes SET type=?, note_date=?, title=?, body=?, updated_at=datetime('now') WHERE id=?`
-  ).run(type, note_date, String(title).trim(), body, req.params.id);
+    `UPDATE notes SET type=?, note_date=?, title=?, body=?, format=?, updated_at=datetime('now') WHERE id=?`
+  ).run(type, note_date, String(title).trim(), body, format, req.params.id);
 
   res.json(db.prepare(`SELECT * FROM notes WHERE id = ?`).get(req.params.id));
 });

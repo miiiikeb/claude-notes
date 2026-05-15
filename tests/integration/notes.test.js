@@ -89,4 +89,29 @@ describe('Notes API', () => {
     const res = await agent.get('/api/notes/99999');
     assert.equal(res.status, 404);
   });
+
+  it('creates a note with format html', async () => {
+    const res = await agent.post('/api/notes').send({ type: 'general', note_date: '2026-05-14', title: 'RT note', body: '<p>hello</p>', format: 'html' });
+    assert.equal(res.status, 201);
+    assert.equal(res.body.format, 'html');
+  });
+
+  it('defaults format to html when not specified', async () => {
+    const res = await agent.post('/api/notes').send({ type: 'general', note_date: '2026-05-14', title: 'Default format' });
+    assert.equal(res.status, 201);
+    assert.equal(res.body.format, 'html');
+  });
+
+  it('rejects invalid format', async () => {
+    const res = await agent.post('/api/notes').send({ type: 'general', note_date: '2026-05-14', title: 'Bad format', format: 'xml' });
+    assert.equal(res.status, 400);
+  });
+
+  it('updates note format via patch', async () => {
+    const created = await agent.post('/api/notes').send({ type: 'general', note_date: '2026-05-14', title: 'Switch format', format: 'html' });
+    const res = await agent.patch(`/api/notes/${created.body.id}`).send({ format: 'md', body: '# heading' });
+    assert.equal(res.status, 200);
+    assert.equal(res.body.format, 'md');
+    assert.equal(res.body.body, '# heading');
+  });
 });

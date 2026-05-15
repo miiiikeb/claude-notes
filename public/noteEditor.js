@@ -1,13 +1,53 @@
 'use strict';
 
 (function () {
-  let currentId  = null;
-  let previewOn  = true;
+  let currentId    = null;
+  let currentMode  = 'rt'; // 'rt' | 'md'
+  let previewOn    = false;
   let debounceTimer;
+  let quill;
+  let turndown;
 
   function today() {
     return new Date().toISOString().slice(0, 10);
   }
+
+  // ── Mode management ────────────────────────────────────────────────────────
+
+  function setMode(mode) {
+    currentMode = mode;
+    const isRT = mode === 'rt';
+
+    document.getElementById('editor-rt-pane').style.display   = isRT ? '' : 'none';
+    document.getElementById('editor-md-pane').style.display   = isRT ? 'none' : '';
+    document.getElementById('btn-mode-toggle').textContent    = isRT ? 'Markdown' : 'Rich Text';
+    document.getElementById('btn-preview-toggle').style.display = isRT ? 'none' : '';
+
+    if (isRT) {
+      document.getElementById('editor-preview-pane').style.display = 'none';
+      previewOn = false;
+    }
+  }
+
+  async function toggleMode() {
+    if (currentMode === 'rt') {
+      const ok = await confirmDialog(
+        'Switch to Markdown',
+        'Some rich-text formatting may not survive conversion to Markdown. Continue?'
+      );
+      if (!ok) return;
+      const html = quill.root.innerHTML;
+      document.getElementById('editor-textarea').value = turndown.turndown(html);
+      setMode('md');
+    } else {
+      const md   = document.getElementById('editor-textarea').value;
+      const html = DOMPurify.sanitize(marked.parse(md));
+      quill.root.innerHTML = html;
+      setMode('rt');
+    }
+  }
+
+  // ── Preview (MD mode only) ─────────────────────────────────────────────────
 
   function renderPreview() {
     const src = document.getElementById('editor-textarea').value;
@@ -17,32 +57,51 @@
   function setPreviewVisible(on) {
     previewOn = on;
     document.getElementById('editor-preview-pane').style.display = on ? '' : 'none';
-    document.getElementById('editor-body').classList.toggle('preview-hidden', !on);
-    document.getElementById('btn-preview-toggle').textContent = on ? 'Hide preview' : 'Preview';
+    document.getElementById('btn-preview-toggle').textContent    = on ? 'Hide preview' : 'Preview';
     if (on) renderPreview();
   }
+
+  // ── Populate / reset ───────────────────────────────────────────────────────
 
   function populate(note) {
     document.getElementById('editor-type').value  = note.type;
     document.getElementById('editor-date').value  = note.note_date;
     document.getElementById('editor-title').value = note.title;
-    document.getElementById('editor-textarea').value = note.body || '';
-    renderPreview();
+
+    if (note.format === 'html') {
+      quill.root.innerHTML = DOMPurify.sanitize(note.body || '');
+      setMode('rt');
+    } else {
+      document.getElementById('editor-textarea').value = note.body || '';
+      setMode('md');
+    }
   }
 
   function reset() {
     document.getElementById('editor-type').value  = 'general';
     document.getElementById('editor-date').value  = today();
     document.getElementById('editor-title').value = '';
-    document.getElementById('editor-textarea').value = '';
-    document.getElementById('editor-preview').innerHTML = '';
+    quill.setText('');
+    setMode('rt');
   }
+
+  // ── Save / delete ──────────────────────────────────────────────────────────
 
   async function save() {
     const type      = document.getElementById('editor-type').value;
     const note_date = document.getElementById('editor-date').value;
     const title     = document.getElementById('editor-title').value.trim();
-    const body      = document.getElementById('editor-textarea').value;
+
+    let body, format;
+    if (currentMode === 'rt') {
+      // Quill empty state is '<p><br></p>' — normalise to ''
+      const raw = quill.root.innerHTML;
+      body   = (raw === '<p><br></p>' || quill.getLength() <= 1) ? '' : raw;
+      format = 'html';
+    } else {
+      body   = document.getElementById('editor-textarea').value;
+      format = 'md';
+    }
 
     if (!title) { showToast('Title is required', true); return; }
 
@@ -50,10 +109,10 @@
     btn.disabled = true;
     try {
       if (currentId) {
-        await api('PATCH', `/notes/${currentId}`, { type, note_date, title, body });
+        await api('PATCH', `/notes/${currentId}`, { type, note_date, title, body, format });
         showToast('Saved');
       } else {
-        const note = await api('POST', '/notes', { type, note_date, title, body });
+        const note = await api('POST', '/notes', { type, note_date, title, body, format });
         currentId = note.id;
         document.getElementById('btn-editor-delete').style.display = '';
         location.replace('#noteEditor/' + currentId);
@@ -79,9 +138,11 @@
     }
   }
 
+  // ── Tags ───────────────────────────────────────────────────────────────────
+
   async function loadEditorTags(noteId) {
-    const section    = document.getElementById('editor-tags-section');
-    const chipsEl    = document.getElementById('editor-tags-list');
+    const section     = document.getElementById('editor-tags-section');
+    const chipsEl     = document.getElementById('editor-tags-list');
     const suggestions = document.getElementById('editor-tags-suggestions');
     section.style.display = '';
     try {
@@ -105,8 +166,9 @@
     } catch { /* ignore */ }
   }
 
+  // ── Page load ──────────────────────────────────────────────────────────────
+
   async function loadNoteEditor() {
-    // Parse optional note ID from hash: #noteEditor/123
     const parts = location.hash.replace('#', '').split('/');
     const id = parts[1] ? parseInt(parts[1], 10) : null;
     currentId = id || null;
@@ -129,15 +191,37 @@
       reset();
     }
 
-    setPreviewVisible(previewOn);
     document.getElementById('editor-title').focus();
   }
 
-  // Wire up controls once DOM is ready — done here so handlers aren't re-added on each load
+  // ── Static wiring (once on DOMContentLoaded) ───────────────────────────────
+
   document.addEventListener('DOMContentLoaded', () => {
+    quill = new Quill('#editor-quill', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          ['blockquote', 'code-block'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link'],
+          ['clean'],
+        ],
+      },
+      placeholder: 'Write your note…',
+    });
+
+    turndown = new TurndownService({
+      headingStyle:    'atx',
+      bulletListMarker: '-',
+      codeBlockStyle:  'fenced',
+    });
+
     document.getElementById('btn-editor-back').addEventListener('click', () => navigate('home'));
     document.getElementById('btn-editor-save').addEventListener('click', save);
     document.getElementById('btn-editor-delete').addEventListener('click', deleteNote);
+    document.getElementById('btn-mode-toggle').addEventListener('click', toggleMode);
     document.getElementById('btn-preview-toggle').addEventListener('click', () => setPreviewVisible(!previewOn));
 
     document.getElementById('editor-textarea').addEventListener('input', () => {
@@ -145,10 +229,12 @@
       debounceTimer = setTimeout(() => { if (previewOn) renderPreview(); }, 200);
     });
 
-    // Ctrl/Cmd+S to save
-    document.getElementById('editor-textarea').addEventListener('keydown', e => {
+    // Ctrl/Cmd+S saves from either mode
+    const saveOnCtrlS = e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); }
-    });
+    };
+    document.getElementById('editor-textarea').addEventListener('keydown', saveOnCtrlS);
+    document.getElementById('editor-quill').addEventListener('keydown', saveOnCtrlS);
 
     document.getElementById('editor-tag-input').addEventListener('keydown', async (e) => {
       if (e.key !== 'Enter') return;

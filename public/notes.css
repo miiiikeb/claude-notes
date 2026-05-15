@@ -97,6 +97,13 @@
 .note-row-date  { font-size: 0.8rem; color: var(--text-muted); flex-shrink: 0; }
 .note-row-age   { font-size: 0.78rem; color: var(--text-muted); flex-shrink: 0; min-width: 4.5rem; text-align: right; }
 
+/* ── Editor mode toggle button active state ──────────────────────────── */
+.btn-mode-active {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  border-color: var(--accent);
+}
+
 /* ── Note editor ─────────────────────────────────────────────────────── */
 .editor-meta {
   display: flex;
@@ -118,8 +125,64 @@
   height: calc(100vh - 180px);
   min-height: 300px;
 }
-.editor-body.preview-hidden .editor-write-pane { flex: 1; }
 
+/* RT pane — hosts the Quill editor */
+.editor-rt-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+#editor-quill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Quill snow theme overrides to match app design */
+#editor-quill .ql-toolbar {
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+  padding: 0.4rem 0.6rem;
+}
+
+#editor-quill .ql-container {
+  flex: 1;
+  border: none;
+  font-family: inherit;
+  font-size: 0.93rem;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+#editor-quill .ql-editor {
+  padding: 0.85rem 1.1rem;
+  line-height: 1.7;
+  color: var(--text);
+  min-height: 100%;
+}
+
+#editor-quill .ql-editor.ql-blank::before {
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+#editor-quill .ql-editor:focus { outline: none; }
+
+.editor-rt-pane:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(176,125,58,0.12);
+}
+
+/* MD pane */
 .editor-write-pane {
   flex: 1;
   display: flex;

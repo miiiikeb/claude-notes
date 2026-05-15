@@ -124,7 +124,10 @@
 
     document.getElementById('detail-date').textContent  = n.note_date;
     document.getElementById('detail-title').textContent = n.title;
-    document.getElementById('detail-body').innerHTML    = DOMPurify.sanitize(marked.parse(n.body || ''));
+    const rawBody = n.body || '';
+    document.getElementById('detail-body').innerHTML = n.format === 'html'
+      ? DOMPurify.sanitize(rawBody)
+      : DOMPurify.sanitize(marked.parse(rawBody));
 
     await Promise.all([
       loadTasks(id),

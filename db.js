@@ -60,4 +60,7 @@ db.exec(`
   END;
 `);
 
+// Additive schema evolution — ignore if column already exists
+try { db.exec(`ALTER TABLE notes ADD COLUMN format TEXT NOT NULL DEFAULT 'md'`); } catch {}
+
 module.exports = db;

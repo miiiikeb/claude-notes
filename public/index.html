@@ -6,6 +6,7 @@
   <title>Notes</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/notes.css?v=00000000">
+  <link rel="stylesheet" href="/quill.snow.css?v=00000000">
 </head>
 <body>
   <header class="app-header">
@@ -75,7 +76,8 @@
       <div class="page-header">
         <button class="btn btn-ghost btn-sm" id="btn-editor-back">← Notes</button>
         <div style="display:flex;gap:0.5rem;align-items:center">
-          <button class="btn btn-ghost btn-sm" id="btn-preview-toggle">Preview</button>
+          <button class="btn btn-ghost btn-sm" id="btn-mode-toggle">Markdown</button>
+          <button class="btn btn-ghost btn-sm" id="btn-preview-toggle" style="display:none">Preview</button>
           <button class="btn btn-danger btn-sm" id="btn-editor-delete" style="display:none">Delete</button>
           <button class="btn btn-primary btn-sm" id="btn-editor-save">Save</button>
         </div>
@@ -100,10 +102,13 @@
       </div>
 
       <div class="editor-body" id="editor-body">
-        <div class="editor-write-pane">
+        <div class="editor-rt-pane" id="editor-rt-pane">
+          <div id="editor-quill"></div>
+        </div>
+        <div class="editor-write-pane" id="editor-md-pane" style="display:none">
           <textarea id="editor-textarea" placeholder="Write in markdown…" spellcheck="true"></textarea>
         </div>
-        <div class="editor-preview-pane" id="editor-preview-pane">
+        <div class="editor-preview-pane" id="editor-preview-pane" style="display:none">
           <div class="editor-preview-content markdown-body" id="editor-preview"></div>
         </div>
       </div>
@@ -297,6 +302,8 @@
   <!-- Project scripts -->
   <script src="/dompurify.min.js?v=00000000"></script>
   <script src="/marked.min.js?v=00000000"></script>
+  <script src="/quill.min.js?v=00000000"></script>
+  <script src="/turndown.min.js?v=00000000"></script>
   <script src="/home.js?v=00000000"></script>
   <script src="/noteEditor.js?v=00000000"></script>
   <script src="/noteDetail.js?v=00000000"></script>

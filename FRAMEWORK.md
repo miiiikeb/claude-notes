@@ -40,10 +40,13 @@ routes/
 public/
   index.html           SPA shell — nav, page sections, confirm modal, toast
   home.js              Notes list page (filter, render, navigate)
-  noteEditor.js        Note create/edit page (markdown, split preview)
+  noteEditor.js        Note create/edit page (rich text via Quill, or markdown with optional preview)
   noteDetail.js        Note detail page (rendered markdown, tasks, tags)
   tasks.js             Tasks page (filter, create, status update, linked notes)
   marked.min.js        Markdown renderer (marked.js UMD bundle)
+  quill.min.js         Rich text editor (Quill v1.3.7)
+  quill.snow.css       Quill snow theme (overridden in notes.css)
+  turndown.min.js      HTML→Markdown conversion (Turndown UMD bundle)
   notes.css            Project CSS overrides and component styles
 std-platform/          Git submodule — platform runtime (read-only)
 deploy-lib/            Git submodule — deploy/rollback scripts (read-only)
@@ -72,7 +75,7 @@ _Platform tables (users, otp_tokens) are created by std-platform/db.js._
 
 | Table | Columns | Purpose |
 |---|---|---|
-| `notes` | `id, type, note_date, title, body, created_at, updated_at` | Notes of type meeting/daily/general |
+| `notes` | `id, type, note_date, title, body, format, created_at, updated_at` | Notes of type meeting/daily/general; format is `'md'` or `'html'` |
 | `tasks` | `id, title, status, due_date, created_at, updated_at` | Tasks with kanban status |
 | `note_tasks` | `note_id, task_id` | Many-to-many note↔task links |
 | `tags` | `id, name` | Free-form case-insensitive tags |

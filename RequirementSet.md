@@ -19,7 +19,8 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 ## Data model
 
 ### Notes
-- A note has a **type** (`meeting`, `daily`, `general`), a **note_date** (the date the note is about), a **title**, and a **body** (markdown).
+- A note has a **type** (`meeting`, `daily`, `general`), a **note_date** (the date the note is about), a **title**, a **body**, and a **format** (`md` or `html`).
+- New notes default to `html` format (rich text editor). Existing notes retain their `md` format until explicitly switched.
 - Multiple notes of any type may share the same `note_date` — no uniqueness enforced.
 - Notes are full-text indexed (FTS5 on title + body) for search.
 
@@ -37,6 +38,19 @@ Authentication, sessions, admin user management, and GitHub Issues integration a
 - Tag input accepts text and confirms on Enter; an autocomplete list shows existing tags.
 - The notes list shows tag chips above the list; clicking a chip filters by that tag.
 - Tag and type filters can be combined.
+
+---
+
+## Note editor
+
+- The note editor supports two modes: **Rich Text** (default) and **Markdown**.
+- **Rich Text mode** uses the Quill editor with a formatting toolbar (headings, bold, italic, underline, strikethrough, blockquote, code block, ordered/unordered lists, links, clear formatting).
+- **Markdown mode** uses a plain-text textarea. An optional split preview pane can be toggled on/off; preview is off by default and not available in rich text mode.
+- A **mode toggle button** in the editor toolbar switches between modes:
+  - Rich Text → Markdown: requires confirmation (formatting may be lost); body is converted using Turndown.
+  - Markdown → Rich Text: converts body using marked.js; no confirmation needed.
+- The note's `format` field (`md` or `html`) is saved with the body on each save. Opening a note reopens it in the mode matching its stored format.
+- Ctrl/Cmd+S saves from either mode.
 
 ---
 
