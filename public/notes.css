@@ -297,6 +297,7 @@
 /* ── Add-task form fields (shared: detail + editor) ──────────────────── */
 .detail-add-task-form select,
 .detail-add-task-form input[type="date"] {
+  width: auto; /* override platform select { width: 100% } */
   padding: 0.28rem 0.45rem;
   font-size: 0.88rem;
   border: 1px solid var(--border);
@@ -314,6 +315,7 @@
 
 /* ── Task status select (shared: tasks page + noteDetail) ────────────── */
 .task-status-select {
+  width: auto; /* override platform select { width: 100% } */
   padding: 0.12rem 0.45rem;
   border-radius: 999px;
   font-size: 0.7rem;

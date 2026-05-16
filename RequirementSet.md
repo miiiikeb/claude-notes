@@ -2,6 +2,8 @@
 
 _2026-05-15: Security fix — markdown output is now sanitized via DOMPurify before rendering to prevent stored XSS. No functional requirement changes._
 
+_2026-05-16: Bug fix — task status select was rendering full-width on the Tasks page (and in note detail task rows) due to the platform's unscoped `select { width: 100% }` rule not being overridden. Fixed by adding `width: auto` to `.task-status-select` and the add-task form select. No functional requirement changes._
+
 _Living document. Update before each deployment to reflect functional changes._
 _The deploy script warns if this file hasn't changed since the last deploy tag._
 
